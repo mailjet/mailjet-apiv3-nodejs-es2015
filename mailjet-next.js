@@ -96,9 +96,12 @@ class MailjetClient {
 		let base = this.config.version
 					+ (method === SEND_RESOURCE ? '' : 'REST');
 
+		let path;
 		if (Object.keys(params).length === 0)
-			return '${base}/${method}';
-		return '${base}/${method}/?${qs.stringify(params)}';
+			path = `${base}/${method}`;
+		 else
+		 	path = `${base}/${method}/?${qs.stringify(params)}`;
+		 return path;
 	}
 
 	httpRequest (method, url, data, callback) {
