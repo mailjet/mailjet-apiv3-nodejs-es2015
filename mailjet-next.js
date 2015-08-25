@@ -127,7 +127,7 @@ class MailjetClient {
 		return new Promise((resolve, reject) => {
 			request[method](options, (error, response, body) => {
 				if (error || [200, 201].indexOf(response.statusCode) === -1)
-					reject({message: error || body, statusCode: response.statusCode});
+					reject({body: error || body, statusCode: response.statusCode});
 				else
 					resolve({statusCode: response.statusCode, body: body});
 			});

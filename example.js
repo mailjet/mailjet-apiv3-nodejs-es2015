@@ -11,3 +11,11 @@ client
 	}, (err) => {
 		console.log (err);
 	});
+
+client.post('sender')
+	.request({Email: 'gbadi@mailjet.com'})
+	.then((response) => {
+		console.log (response.body);
+	}, (err) => {
+		console.log (err.body);
+	});
