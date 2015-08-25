@@ -1,0 +1,26 @@
+{
+  "name": "mailjet-next",
+  "version": "1.0.0",
+  "description": "Mailjet es6 repository",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mailjet/mailjet-apiv3-nodejs-es2015.git"
+  },
+  "keywords": [
+    "mailjet",
+    "es2015",
+    "es6",
+    "next",
+    "babel"
+  ],
+  "author": "Guillaume Badi <gbadi@mailjet.com> (https://github.com/GuillaumeBadi)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mailjet/mailjet-apiv3-nodejs-es2015/issues"
+  },
+  "homepage": "https://github.com/mailjet/mailjet-apiv3-nodejs-es2015#readme"
+}
