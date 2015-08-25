@@ -3,12 +3,16 @@
 [api_credential]: https://app.mailjet.com/account/api_keys
 [eventemitter]: https://nodejs.org/api/events.html
 [doc]: http://dev.mailjet.com/
+[stable]: https://github.com/mailjet/mailjet-apiv3-nodejs
 
 ![alt text](http://cdn.appstorm.net/web.appstorm.net/files/2012/02/mailjet_logo_200x200.png "Mailjet")
 
 # Mailjet EcmaScript2015 Wrapper
 
-Please welcome the new [Mailjet][mailjet] official NodeJS API wrapper!
+Please welcome the new [Mailjet][mailjet] experimental EcmaScript API wrapper!
+If you want a Stable ES5 version, click [Here][stable]
+
+It is basically a translation, implementing the new EcmaScript specifications.
 
 [Mailjet][mailjet] is an Email Service Provider (ESP). Visit the website and get comfortable!
 
