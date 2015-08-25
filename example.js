@@ -19,3 +19,8 @@ client.post('sender')
 	}, (err) => {
 		console.log (err.body);
 	});
+
+client.get('contactslist')
+	.request((error, response, body) => {
+		console.log (error || body);
+	});
