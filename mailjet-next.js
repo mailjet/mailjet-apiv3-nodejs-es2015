@@ -24,17 +24,17 @@
  *
  */
 
-const FUNCTION			= 0;
-const ID				= 1;
-const ACTION			= 2;
+const FUNCTION = 0;
+const ID = 1;
+const ACTION = 2;
 
-const SEND_RESOURCE		= 'send';
+const SEND_RESOURCE = 'send';
 
-import qs				from 'querystring';
-import request			from 'request';
-import _path			from 'path';
-import config			from './config';
-import util				from 'util';
+import qs from 'querystring';
+import request from 'request';
+import _path from 'path';
+import config from './config';
+import util from 'util';
 
 class MailjetResource {
 
@@ -96,12 +96,8 @@ class MailjetClient {
 		let base = this.config.version
 					+ (method === SEND_RESOURCE ? '' : 'REST');
 
-		let path;
-		if (Object.keys(params).length === 0)
-			path = `${base}/${method}`;
-		 else
-		 	path = `${base}/${method}/?${qs.stringify(params)}`;
-		 return path;
+		return Object.keys(params).length === 0 ?
+					`${base}/${method}` : `${base}/${method}/?${qs.stringify(params)}`;
 	}
 
 	httpRequest (method, url, data, callback) {
@@ -118,18 +114,16 @@ class MailjetClient {
 		if (callback) {
 			return request[method](options, (error, response, body) => {
 				if (error || [200, 201].indexOf(response.statusCode) === -1)
-					callback(error || body, response);
-				else
-					callback(null, response, body);
-			})
+					return callback(error || body, response);
+				return callback(null, response, body);
+			});
 		}
 		
 		return new Promise((resolve, reject) => {
 			request[method](options, (error, response, body) => {
 				if (error || [200, 201].indexOf(response.statusCode) === -1)
-					reject({body: error || body, statusCode: response.statusCode});
-				else
-					resolve({statusCode: response.statusCode, body: body});
+					return reject({body: error || body, statusCode: response.statusCode});
+				return resolve({statusCode: response.statusCode, body: body});
 			});
 		});
 	}
