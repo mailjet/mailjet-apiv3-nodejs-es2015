@@ -113,7 +113,7 @@ class MailjetClient {
 
 		if (callback) {
 			return request[method](options, (error, response, body) => {
-				if (error || [200, 201].indexOf(response.statusCode) === -1)
+				if (error || response.statusCode > 210)
 					return callback(error || body, response);
 				return callback(null, response, body);
 			});
