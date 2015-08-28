@@ -1,19 +1,19 @@
 
 /*
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2015 Mailjet
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,11 +24,20 @@
  *
  */
 
+const DEBUG_MODE = true;
+
 const FUNCTION = 0;
 const ID = 1;
 const ACTION = 2;
 
-const SEND_RESOURCE = 'send';
+/*
+ * Imports.
+ *
+ * qs is used to format the url from the provided parameters and method
+ * _path will join a path according to the OS specifications
+ * https will be used to make a secure http request to the API
+ * fs will simply be used to read files
+ */
 
 import qs from 'querystring';
 import request from 'request';
@@ -84,17 +93,26 @@ class MailjetResource {
 	}
 }
 
+/*
+ * MailjetClient constructor.
+ *
+ * @qpi_key (optional) {String} mailjet account api key
+ * @api_secret (optional) {String} mailjet account api secret
+ *
+ * If you don't know what this is about, sign up to Mailjet at:
+ * https://www.mailjet.com/
+ */
 class MailjetClient {
 
-	constructor (apiKey, apiSecret) {
+	constructor (apiKey, apiSecret, test) {
 		this.config = config;
 		this.apiKey = apiKey;
 		this.apiSecret = apiSecret;
+		this.testMode = test;
 	}
 
 	path (method, params) {
-		let base = this.config.version
-					+ (method === SEND_RESOURCE ? '' : 'REST');
+		let base = this.config.version + 'REST';
 
 		return Object.keys(params).length === 0 ?
 					`${base}/${method}` : `${base}/${method}/?${qs.stringify(params)}`;
@@ -102,14 +120,26 @@ class MailjetClient {
 
 	httpRequest (method, url, data, callback) {
 
+		if (url.match(/REST\/send$/i))
+			url = url.replace(/REST\/send/gi, 'send');
+		else if (url.match(/REST\/contactslist\/[0-9]+\/CSVData/gi))
+			url = url.replace(/REST/gi, 'DATA').replace(/CSVData/gi, 'CSVData/text:plain');
+		else if (url.match(/REST\/batchjob\/[0-9]+\/csvError/gi))
+			url = url.replace(/REST/gi, 'DATA').replace(/csverror/gi, 'CSVError/text:csv');
+
 		let options = {
 			url,
 			json: true,
-			auth: { user: this.apiKey, pass: this.apiSecret}
+			auth: { user: this.apiKey, pass: this.apiSecret},
 		}
+
+		if (this.testMode || DEBUG_MODE) console.log ('Finale url: ' + url);
 
 		if ('post|put'.indexOf(method) != -1)
 			options.body = data;
+
+		if (this.testMode || DEBUG_MODE)
+			return { data, url };
 
 		if (callback) {
 			return request[method](options, (error, response, body) => {
@@ -118,12 +148,12 @@ class MailjetClient {
 				return callback(null, response, body);
 			});
 		}
-		
+
 		return new Promise((resolve, reject) => {
 			request[method](options, (error, response, body) => {
 				if (error || response.statusCode > 210)
-					return reject({body: error || body, statusCode: response.statusCode});
-				return resolve({statusCode: response.statusCode, body: body});
+					return reject({body: error || body, response });
+				return resolve({ response, body });
 			});
 		});
 	}
@@ -143,7 +173,7 @@ class MailjetClient {
 	delete (res) {
 		return new MailjetResource('del', res, this);
 	}
-	
+
 }
 
 MailjetClient.connect = (k, s) => new MailjetClient(k, s);
